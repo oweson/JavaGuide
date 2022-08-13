@@ -1,5 +1,5 @@
 ---
-title:  Spring 事务总结
+title:  Spring 事务详解
 category: 框架
 tag:
   - Spring
@@ -70,7 +70,7 @@ public class OrdersService {
 
 这里再多提一下一个非常重要的知识点： **MySQL 怎么保证原子性的？**
 
-我们知道如果想要保证事务的原子性，就需要在异常发生时，对已经执行的操作进行**回滚**，在 MySQL 中，恢复机制是通过 **回滚日志（undo log）** 实现的，所有事务进行的修改都会先先记录到这个回滚日志中，然后再执行相关的操作。如果执行过程中遇到异常的话，我们直接利用 **回滚日志** 中的信息将数据回滚到修改之前的样子即可！并且，回滚日志会先于数据持久化到磁盘上。这样就保证了即使遇到数据库突然宕机等情况，当用户再次启动数据库的时候，数据库还能够通过查询回滚日志来回滚将之前未完成的事务。
+我们知道如果想要保证事务的原子性，就需要在异常发生时，对已经执行的操作进行**回滚**，在 MySQL 中，恢复机制是通过 **回滚日志（undo log）** 实现的，所有事务进行的修改都会先记录到这个回滚日志中，然后再执行相关的操作。如果执行过程中遇到异常的话，我们直接利用 **回滚日志** 中的信息将数据回滚到修改之前的样子即可！并且，回滚日志会先于数据持久化到磁盘上。这样就保证了即使遇到数据库突然宕机等情况，当用户再次启动数据库的时候，数据库还能够通过查询回滚日志来回滚将之前未完成的事务。
 
 ### Spring 支持两种方式的事务管理
 
@@ -127,7 +127,7 @@ public void testTransaction() {
 使用 `@Transactional`注解进行事务管理的示例代码如下：
 
 ```java
-@Transactional(propagation=propagation.PROPAGATION_REQUIRED)
+@Transactional(propagation = Propagation.REQUIRED)
 public void aMethod {
   //do something
   B b = new B();
@@ -251,7 +251,7 @@ public interface TransactionDefinition {
 
 `PlatformTransactionManager.getTransaction(…)`方法返回一个 `TransactionStatus` 对象。
 
-**TransactionStatus 接口接口内容如下：**
+**TransactionStatus 接口内容如下：**
 
 ```java
 public interface TransactionStatus{
@@ -265,7 +265,7 @@ public interface TransactionStatus{
 
 ### 事务属性详解
 
-际业务开发中，大家一般都是使用 `@Transactional` 注解来开启事务，很多人并不清楚这个参数里面的参数是什么意思，有什么用。为了更好的在项目中使用事务管理，强烈推荐好好阅读一下下面的内容。
+实际业务开发中，大家一般都是使用 `@Transactional` 注解来开启事务，但很多人并不清楚这个注解里面的参数是什么意思，有什么用。为了更好的在项目中使用事务管理，强烈推荐好好阅读一下下面的内容。
 
 #### 事务传播行为
 
@@ -273,20 +273,23 @@ public interface TransactionStatus{
 
 当事务方法被另一个事务方法调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。
 
-举个例子：我们在 A 类的`aMethod（）`方法中调用了 B 类的 `bMethod()` 方法。这个时候就涉及到业务层方法之间互相调用的事务问题。如果我们的 `bMethod()`如果发生异常需要回滚，如何配置事务传播行为才能让 `aMethod()`也跟着回滚呢？这个时候就需要事务传播行为的知识了，如果你不知道的话一定要好好看一下。
+举个例子：我们在 A 类的`aMethod()`方法中调用了 B 类的 `bMethod()` 方法。这个时候就涉及到业务层方法之间互相调用的事务问题。如果我们的 `bMethod()`如果发生异常需要回滚，如何配置事务传播行为才能让 `aMethod()`也跟着回滚呢？这个时候就需要事务传播行为的知识了，如果你不知道的话一定要好好看一下。
 
 ```java
+@Service
 Class A {
-    @Transactional(propagation=propagation.xxx)
+    @Autowired
+    B b;
+    @Transactional(propagation = Propagation.xxx)
     public void aMethod {
         //do something
-        B b = new B();
         b.bMethod();
     }
 }
 
+@Service
 Class B {
-    @Transactional(propagation=propagation.xxx)
+    @Transactional(propagation = Propagation.xxx)
     public void bMethod {
        //do something
     }
@@ -308,7 +311,7 @@ public interface TransactionDefinition {
 }
 ```
 
-不过如此，为了方便使用，Spring 会相应地定义了一个枚举类：`Propagation`
+不过，为了方便使用，Spring 相应地定义了一个枚举类：`Propagation`
 
 ```java
 package org.springframework.transaction.annotation;
@@ -357,17 +360,19 @@ public enum Propagation {
 举个例子：如果我们上面的`aMethod()`和`bMethod()`使用的都是`PROPAGATION_REQUIRED`传播行为的话，两者使用的就是同一个事务，只要其中一个方法回滚，整个事务均回滚。
 
 ```java
+@Service
 Class A {
-    @Transactional(propagation=propagation.PROPAGATION_REQUIRED)
+    @Autowired
+    B b;
+    @Transactional(propagation = Propagation.REQUIRED)
     public void aMethod {
         //do something
-        B b = new B();
         b.bMethod();
     }
 }
-
+@Service
 Class B {
-    @Transactional(propagation=propagation.PROPAGATION_REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void bMethod {
        //do something
     }
@@ -381,17 +386,20 @@ Class B {
 举个例子：如果我们上面的`bMethod()`使用`PROPAGATION_REQUIRES_NEW`事务传播行为修饰，`aMethod`还是用`PROPAGATION_REQUIRED`修饰的话。如果`aMethod()`发生异常回滚，`bMethod()`不会跟着回滚，因为 `bMethod()`开启了独立的事务。但是，如果 `bMethod()`抛出了未被捕获的异常并且这个异常满足事务回滚规则的话,`aMethod()`同样也会回滚，因为这个异常被 `aMethod()`的事务管理机制检测到了。
 
 ```java
+@Service
 Class A {
-    @Transactional(propagation=propagation.PROPAGATION_REQUIRED)
+    @Autowired
+    B b;
+    @Transactional(propagation = Propagation.REQUIRED)
     public void aMethod {
         //do something
-        B b = new B();
         b.bMethod();
     }
 }
 
+@Service
 Class B {
-    @Transactional(propagation=propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void bMethod {
        //do something
     }
@@ -408,17 +416,20 @@ Class B {
 这里还是简单举个例子：如果 `bMethod()` 回滚的话，`aMethod()`也会回滚。
 
 ```java
+@Service
 Class A {
-    @Transactional(propagation=propagation.PROPAGATION_REQUIRED)
+    @Autowired
+    B b;
+    @Transactional(propagation = Propagation.REQUIRED)
     public void aMethod {
         //do something
-        B b = new B();
         b.bMethod();
     }
 }
 
+@Service
 Class B {
-    @Transactional(propagation=propagation.PROPAGATION_NESTED)
+    @Transactional(propagation = Propagation.NESTED)
     public void bMethod {
        //do something
     }
@@ -455,7 +466,7 @@ public interface TransactionDefinition {
 }
 ```
 
-和事务传播行为这块一样，为了方便使用，Spring 也相应地定义了一个枚举类：`Isolation`
+和事务传播行为那块一样，为了方便使用，Spring 也相应地定义了一个枚举类：`Isolation`
 
 ```java
 public enum Isolation {
@@ -491,34 +502,11 @@ public enum Isolation {
 - **`TransactionDefinition.ISOLATION_REPEATABLE_READ`** : 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，**可以阻止脏读和不可重复读，但幻读仍有可能发生。**
 - **`TransactionDefinition.ISOLATION_SERIALIZABLE`** : 最高的隔离级别，完全服从 ACID 的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，**该级别可以防止脏读、不可重复读以及幻读**。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
 
-因为平时使用 MySQL 数据库比较多，这里再多提一嘴！
-
-MySQL InnoDB 存储引擎的默认支持的隔离级别是 **REPEATABLE-READ（可重读）**。我们可以通过`SELECT @@tx_isolation;`命令来查看，MySQL 8.0 该命令改为`SELECT @@transaction_isolation;`
-
-```sql
-mysql> SELECT @@tx_isolation;
-+-----------------+
-| @@tx_isolation  |
-+-----------------+
-| REPEATABLE-READ |
-+-----------------+
-```
-
-~~这里需要注意的是：与 SQL 标准不同的地方在于 InnoDB 存储引擎在 **REPEATABLE-READ（可重读）** 事务隔离级别下使用的是 Next-Key Lock 锁算法，因此可以避免幻读的产生，这与其他数据库系统(如 SQL Server)是不同的。所以说 InnoDB 存储引擎的默认支持的隔离级别是 **REPEATABLE-READ（可重读）** 已经可以完全保证事务的隔离性要求，即达到了 SQL 标准的 **SERIALIZABLE(可串行化)** 隔离级别。~~
-
-🐛 问题更正：**MySQL InnoDB 的 REPEATABLE-READ（可重读）并不保证避免幻读，需要应用使用加锁读来保证。而这个加锁读使用到的机制就是 Next-Key Locks。**
-
-因为隔离级别越低，事务请求的锁越少，所以大部分数据库系统的隔离级别都是 **READ-COMMITTED(读取提交内容)** ，但是你要知道的是 InnoDB 存储引擎默认使用 **REPEAaTABLE-READ（可重读）** 并不会有任何性能损失。
-
-InnoDB 存储引擎在 **分布式事务** 的情况下一般会用到 **SERIALIZABLE(可串行化)** 隔离级别。
-
-🌈 拓展一下(以下内容摘自《MySQL 技术内幕：InnoDB 存储引擎(第 2 版)》7.7 章)：
-
-> InnoDB 存储引擎提供了对 XA 事务的支持，并通过 XA 事务来支持分布式事务的实现。分布式事务指的是允许多个独立的事务资源（transactional resources）参与到一个全局的事务中。事务资源通常是关系型数据库系统，但也可以是其他类型的资源。全局事务要求在其中的所有参与的事务要么都提交，要么都回滚，这对于事务原有的 ACID 要求又有了提高。另外，在使用分布式事务时，InnoDB 存储引擎的事务隔离级别必须设置为 SERIALIZABLE。
+相关阅读：[MySQL事务隔离级别详解](https://javaguide.cn/database/mysql/transaction-isolation-level.html)。
 
 #### 事务超时属性
 
-所谓事务超时，就是指一个事务所允许执行的最长时间，如果超过该时间限制但事务还没有完成，则自动回滚事务。在 `TransactionDefinition` 中以 int 的值来表示超时时间，其单位是秒，默认值为-1。
+所谓事务超时，就是指一个事务所允许执行的最长时间，如果超过该时间限制但事务还没有完成，则自动回滚事务。在 `TransactionDefinition` 中以 int 的值来表示超时时间，其单位是秒，默认值为-1，这表示事务的超时时间取决于底层事务系统或者没有超时时间。
 
 #### 事务只读属性
 

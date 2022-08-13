@@ -11,7 +11,7 @@ tag:
 
 ## 前言
 
-Java 中的大部分同步类（Lock、Semaphore、ReentrantLock 等）都是基于 AbstractQueuedSynchronizer（简称为 AQS）实现的。AQS 是一种提供了原子式管理同步状态、阻塞和唤醒线程功能以及队列模型的简单框架。本文会从应用层逐渐深入到原理层，并通过 ReentrantLock 的基本特性和 ReentrantLock 与 AQS 的关联，来深入解读 AQS 相关独占锁的知识点，同时采取问答的模式来帮助大家理解 AQS。由于篇幅原因，本篇文章主要阐述 AQS 中独占锁的逻辑和 Sync Queue，不讲述包含共享锁和 Condition Queue 的部分（本篇文章核心为 AQS 原理剖析，只是简单介绍了 ReentrantLock，感兴趣同学可以阅读一下 ReentrantLock 的源码）。
+Java 中的大部分同步类（Semaphore、ReentrantLock 等）都是基于 AbstractQueuedSynchronizer（简称为 AQS）实现的。AQS 是一种提供了原子式管理同步状态、阻塞和唤醒线程功能以及队列模型的简单框架。本文会从应用层逐渐深入到原理层，并通过 ReentrantLock 的基本特性和 ReentrantLock 与 AQS 的关联，来深入解读 AQS 相关独占锁的知识点，同时采取问答的模式来帮助大家理解 AQS。由于篇幅原因，本篇文章主要阐述 AQS 中独占锁的逻辑和 Sync Queue，不讲述包含共享锁和 Condition Queue 的部分（本篇文章核心为 AQS 原理剖析，只是简单介绍了 ReentrantLock，感兴趣同学可以阅读一下 ReentrantLock 的源码）。
 
 ## 1 ReentrantLock
 
@@ -96,7 +96,7 @@ static final class NonfairSync extends Sync {
 
 带着非公平锁的这些问题，再看下公平锁源码中获锁的方式：
 
-```
+```java
 // java.util.concurrent.locks.ReentrantLock#FairSync
 
 static final class FairSync extends Sync {
@@ -217,6 +217,32 @@ private volatile int state;
 以非公平锁为例，这里主要阐述一下非公平锁与 AQS 之间方法的关联之处，具体每一处核心方法的作用会在文章后面详细进行阐述。
 
 ![](https://p1.meituan.net/travelcube/b8b53a70984668bc68653efe9531573e78636.png)
+
+> 🐛 修正（参见： [issue#1761](https://github.com/Snailclimb/JavaGuide/issues/1761)）: 图中的一处小错误，(AQS)CAS修改共享资源 State 成功之后应该是获取锁成功(非公平锁)。
+>
+> 对应的源码如下：
+>
+> ```java
+> final boolean nonfairTryAcquire(int acquires) {
+>          final Thread current = Thread.currentThread();//获取当前线程
+>          int c = getState();
+>          if (c == 0) {
+>              if (compareAndSetState(0, acquires)) {//CAS抢锁
+>                  setExclusiveOwnerThread(current);//设置当前线程为独占线程
+>                  return true;//抢锁成功
+>              }
+>          }
+>          else if (current == getExclusiveOwnerThread()) {
+>              int nextc = c + acquires;
+>              if (nextc < 0) // overflow
+>                  throw new Error("Maximum lock count exceeded");
+>              setState(nextc);
+>              return true;
+>          }
+>          return false;
+>      }
+> ```
+>
 
 为了帮助大家理解 ReentrantLock 和 AQS 之间方法的交互过程，以非公平锁为例，我们将加锁和解锁的交互流程单独拎出来强调一下，以便于对后续内容的理解。
 

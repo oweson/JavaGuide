@@ -19,7 +19,7 @@ tag:
 -- 创建Windows服务
     sc create mysql binPath= mysqld_bin_path(注意：等号与值之间有空格)
 /* 连接与断开服务器 */
-mysql -h 地址 -P 端口 -u 用户名 -p 密码
+mysql -u 地址 -P 端口 -u 用户名 -p 密码
 SHOW PROCESSLIST -- 显示哪些线程正在运行
 SHOW VARIABLES -- 显示系统变量信息
 ```
@@ -137,7 +137,7 @@ SHOW VARIABLES -- 显示系统变量信息
     INSERT [INTO] 表名 [(字段列表)] VALUES (值列表)[, (值列表), ...]
         -- 如果要插入的值列表包含所有字段并且顺序一致，则可以省略字段列表。
         -- 可同时插入多条数据记录！
-        REPLACE 与 INSERT 完全一样，可互换。
+        REPLACE与INSERT类似，唯一的区别是对于匹配的行，现有行（与主键/唯一键比较）的数据会被替换，如果没有现有行，则插入新行。
     INSERT [INTO] 表名 SET 字段名=值[, 字段名=值, ...]
 -- 查
     SELECT 字段列表 FROM 表名[ 其他子句]

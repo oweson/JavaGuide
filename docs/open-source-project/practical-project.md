@@ -1,6 +1,7 @@
 ---
-title: 实战项目
+title: Java 优质开源实战项目
 category: 开源项目
+icon: project
 ---
 
 ## 博客/论坛/考试系统

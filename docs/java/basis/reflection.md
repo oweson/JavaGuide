@@ -1,5 +1,5 @@
 ---
-title:  反射机制详解
+title:  Java 反射机制详解
 category: Java
 tag:
   - Java基础
@@ -87,7 +87,7 @@ Class alunbarClass2 = o.getClass();
 **4. 通过类加载器`xxxClassLoader.loadClass()`传入类路径获取:**
 
 ```java
-Class clazz = ClassLoader.loadClass("cn.javaguide.TargetObject");
+ClassLoader.getSystemClassLoader().loadClass("cn.javaguide.TargetObject");
 ```
 
 通过类加载器获取 Class 对象不会进行初始化，意味着不进行包括初始化等一系列步骤，静态代码块和静态对象不会得到执行
@@ -130,8 +130,8 @@ public class Main {
         /**
          * 获取 TargetObject 类的 Class 对象并且创建 TargetObject 类实例
          */
-        Class<?> tagetClass = Class.forName("cn.javaguide.TargetObject");
-        TargetObject targetObject = (TargetObject) tagetClass.newInstance();
+        Class<?> targetClass = Class.forName("cn.javaguide.TargetObject");
+        TargetObject targetObject = (TargetObject) targetClass.newInstance();
         /**
          * 获取 TargetObject 类中定义的所有方法
          */

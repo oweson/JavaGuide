@@ -11,7 +11,7 @@ tag:
 
 **代理模式的主要作用是扩展目标对象的功能，比如说在目标对象的某个方法执行前后你可以增加一些自定义的操作。**
 
-举个例子：你找了小红来帮你问话，小红就可以看作是代理你的代理对象，代理的行为（方法）是问话。
+举个例子：新娘找来了自己的姨妈来代替自己处理新郎的提问，新娘收到的提问都是经过姨妈处理过滤之后的。姨妈在这里就可以看作是代理你的代理对象，代理的行为（方法）是接收和回复新郎的提问。
 
 ![Understanding the Proxy Design Pattern | by Mithun Sasidharan | Medium](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/2020-8/1*DjWCgTFm-xqbhbNQVsaWQw.png)
 
@@ -272,16 +272,15 @@ after method send
 public interface MethodInterceptor
 extends Callback{
     // 拦截被代理类中的方法
-    public Object intercept(Object obj, java.lang.reflect.Method method, Object[] args,
-                               MethodProxy proxy) throws Throwable;
+    public Object intercept(Object obj, java.lang.reflect.Method method, Object[] args,MethodProxy proxy) throws Throwable;
 }
 
 ```
 
-1. **obj** :被代理的对象（需要增强的对象）
-2. **method** :被拦截的方法（需要增强的方法）
-3. **args** :方法入参
-4. **proxy** :用于调用原始方法
+1. **obj** : 动态生成的代理对象
+2. **method** : 被拦截的方法（需要增强的方法）
+3. **args** : 方法入参
+4. **proxy** : 用于调用原始方法
 
 你可以通过 `Enhancer`类来动态获取被代理类，当代理类调用方法的时候，实际调用的是 `MethodInterceptor` 中的 `intercept` 方法。
 

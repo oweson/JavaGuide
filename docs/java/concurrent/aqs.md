@@ -1,5 +1,5 @@
 ---
-title:  AQS 原理以及 AQS 同步组件总结
+title:  AQS 详解
 category: Java
 tag:
   - Java并发
@@ -13,11 +13,13 @@ tag:
 - 用过 `Semaphore` 吗？应用场景了解吗？
 - ......
 
+相关阅读：[从 ReentrantLock 的实现看AQS的原理及应用](./reentrantlock.md)
+
 ## AQS 简单介绍
 
 AQS 的全称为 `AbstractQueuedSynchronizer` ，翻译过来的意思就是抽象队列同步器。这个类在 `java.util.concurrent.locks` 包下面。
 
-![enter image description here](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/Java%20%E7%A8%8B%E5%BA%8F%E5%91%98%E5%BF%85%E5%A4%87%EF%BC%9A%E5%B9%B6%E5%8F%91%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E6%80%BB%E7%BB%93/AQS.png)
+![](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/Java%20%E7%A8%8B%E5%BA%8F%E5%91%98%E5%BF%85%E5%A4%87%EF%BC%9A%E5%B9%B6%E5%8F%91%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E6%80%BB%E7%BB%93/AQS.png)
 
 AQS 就是一个抽象类，主要用来构建锁和同步器。
 
@@ -209,7 +211,7 @@ final boolean nonfairTryAcquire(int acquires) {
 ```java
 protected boolean tryAcquire(int)//独占方式。尝试获取资源，成功则返回true，失败则返回false。
 protected boolean tryRelease(int)//独占方式。尝试释放资源，成功则返回true，失败则返回false。
-protected boolean tryAcquireShared(int)//共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
+protected int tryAcquireShared(int)//共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
 protected boolean tryReleaseShared(int)//共享方式。尝试释放资源，成功则返回true，失败则返回false。
 protected boolean isHeldExclusively()//该线程是否正在独占资源。只有用到condition才需要去实现它。
 ```

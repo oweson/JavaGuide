@@ -1,5 +1,5 @@
 ---
-title:  命名
+title:  Java 编码命名之道
 category: 代码质量
 ---
 
@@ -233,7 +233,7 @@ Codelf 提供了在线网站版本，网址：[https://unbug.github.io/codelf/](
 
 1. 《阿里巴巴 Java 开发手册》
 2. 《Clean Code》
-3. Google Java 代码指南：https://google.github.io/styleguide/javaguide.html#s5.1-identifier-name
+3. Google Java 代码指南：https://google.github.io/styleguide/javaguide.html
 4. 告别编码5分钟，命名2小时！史上最全的Java命名规范参考：https://www.cnblogs.com/liqiangchn/p/12000361.html 
 
 ## 总结

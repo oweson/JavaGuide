@@ -1,88 +1,32 @@
 import { defineSidebarConfig } from "vuepress-theme-hope";
+import { highQualityTechnicalArticles } from "./sidebar/high-quality-technical-articles";
+import { aboutTheAuthor } from "./sidebar/about-the-author";
+import { books } from "./sidebar/books";
+import { openSourceProject } from "./sidebar/open-source-project";
 
 export const sidebarConfig = defineSidebarConfig({
   // 应该把更精确的路径放置在前边
-  "/javaguide/": ["intro", "contribution-guideline", "faq", "todo"],
-  "/zhuanlan/": ["java-mian-shi-zhi-bei", "handwritten-rpc-framework"],
-  "/open-source-project/": [
-    "tutorial",
-    "practical-project",
-    "system-design",
-    "tool-library",
-    "tools",
-    "machine-learning",
-    "big-data",
-  ],
-  "/about-the-author/": [
-    {
-      text: "个人经历",
-      icon: "zuozhe",
-      collapsable: false,
-      children: [
-        "internet-addiction-teenager",
-        "javaguide-100k-star",
-        "feelings-after-one-month-of-induction-training",
-        "feelings-of-half-a-year-from-graduation-to-entry",
-      ],
-    },
-    {
-      text: "杂谈",
-      icon: "chat",
-      collapsable: false,
-      children: [
-        "my-article-was-stolen-and-made-into-video-and-it-became-popular",
-        "dog-that-copies-other-people-essay",
-        "zhishixingqiu-two-years",
-      ],
-    },
-  ],
-  "/high-quality-technical-articles/": [
-    {
-      text: "练级攻略",
-      icon: "et-performance",
-      prefix: "advanced-programmer/",
-      collapsable: false,
-      children: ["seven-tips-for-becoming-an-advanced-programmer"],
-    },
-    {
-      text: "个人经历",
-      icon: "zuozhe",
-      prefix: "personal-experience/",
-      collapsable: false,
-      children: [
-        "two-years-of-back-end-develop--experience-in-didi&toutiao",
-        "8-years-programmer-work-summary",
-      ],
-    },
-    {
-      text: "面试",
-      icon: "mianshi",
-      prefix: "interview/",
-      collapsable: false,
-      children: [
-        "the-experience-and-thinking-of-an-interview-experienced-by-an-older-programmer",
-        "technical-preliminary-preparation",
-        "screen-candidates-for-packaging",
-      ],
-    },
-    {
-      text: "工作",
-      icon: "work0",
-      prefix: "work/",
-      collapsable: false,
-      children: ["get-into-work-mode-quickly-when-you-join-a-company"],
-    },
+  "/open-source-project/": openSourceProject,
+  "/books/": books,
+  "/about-the-author/": aboutTheAuthor,
+  "/high-quality-technical-articles/": highQualityTechnicalArticles,
+  "/javaguide/": ["intro", "history", "contribution-guideline", "faq", "todo"],
+  "/zhuanlan/": [
+    "java-mian-shi-zhi-bei",
+    "handwritten-rpc-framework",
+    "source-code-reading",
   ],
   // 必须放在最后面
   "/": [
     {
       text: "面试准备",
-      icon: "mianshi",
+      icon: "interview",
       prefix: "interview-preparation/",
       collapsable: true,
       children: [
         "teach-you-how-to-prepare-for-the-interview-hand-in-hand",
         "interview-experience",
+        "self-test-of-common-interview-questions",
       ],
     },
     {
@@ -102,21 +46,23 @@ export const sidebarConfig = defineSidebarConfig({
             "java-basic-questions-03",
             {
               text: "重要知识点",
-              icon: "important",
+              icon: "star",
               collapsable: true,
               children: [
                 "why-there-only-value-passing-in-java",
                 "serialization",
+                "generics-and-wildcards",
                 "reflection",
                 "proxy",
-                "io",
                 "bigdecimal",
+                "unsafe",
+                "spi",
               ],
             },
           ],
         },
         {
-          text: "容器",
+          text: "集合",
           prefix: "collection/",
           icon: "container",
           collapsable: true,
@@ -127,6 +73,7 @@ export const sidebarConfig = defineSidebarConfig({
             {
               text: "源码分析",
               collapsable: true,
+              icon: "star",
               children: [
                 "arraylist-source-code",
                 "hashmap-source-code",
@@ -134,6 +81,14 @@ export const sidebarConfig = defineSidebarConfig({
               ],
             },
           ],
+        },
+
+        {
+          text: "IO",
+          prefix: "io/",
+          icon: "code",
+          collapsable: true,
+          children: ["io-basis", "io-design-patterns", "io-model"],
         },
         {
           text: "并发编程",
@@ -143,16 +98,17 @@ export const sidebarConfig = defineSidebarConfig({
           children: [
             "java-concurrent-questions-01",
             "java-concurrent-questions-02",
+            "java-concurrent-questions-03",
             {
               text: "重要知识点",
-              icon: "important",
+              icon: "star",
               collapsable: true,
               children: [
+                "jmm",
                 "java-thread-pool-summary",
                 "java-thread-pool-best-practices",
                 "java-concurrent-collections",
                 "aqs",
-                "reentrantlock",
                 "atomic-classes",
                 "threadlocal",
                 "completablefuture-intro",
@@ -179,7 +135,7 @@ export const sidebarConfig = defineSidebarConfig({
         {
           text: "新特性",
           prefix: "new-features/",
-          icon: "features",
+          icon: "featured",
           collapsable: true,
           children: [
             "java8-common-new-features",
@@ -189,6 +145,7 @@ export const sidebarConfig = defineSidebarConfig({
             "java11",
             "java12-13",
             "java14-15",
+            "java16",
           ],
         },
       ],
@@ -205,10 +162,18 @@ export const sidebarConfig = defineSidebarConfig({
           icon: "network",
           collapsable: true,
           children: [
-            "osi&tcp-ip-model",
-            "http&https",
-            "http1.0&http1.1",
             "other-network-questions",
+            {
+              text: "重要知识点",
+              icon: "star",
+              collapsable: true,
+              children: [
+                "osi&tcp-ip-model",
+                "http&https",
+                "http1.0&http1.1",
+                "http-status-codes",
+              ],
+            },
           ],
         },
         {
@@ -245,6 +210,7 @@ export const sidebarConfig = defineSidebarConfig({
             "string-algorithm-problems",
             "linkedlist-algorithm-problems",
             "the-sword-refers-to-offer",
+            "10-classical-sorting-algorithms",
           ],
         },
       ],
@@ -255,8 +221,12 @@ export const sidebarConfig = defineSidebarConfig({
       prefix: "database/",
       collapsable: true,
       children: [
-        "basis",
-        "character-set",
+        {
+          text: "基础",
+          icon: "basic",
+          collapsable: true,
+          children: ["basis", "character-set"],
+        },
         {
           text: "MySQL",
           prefix: "mysql/",
@@ -268,7 +238,7 @@ export const sidebarConfig = defineSidebarConfig({
             "mysql-high-performance-optimization-specification-recommendations",
             {
               text: "重要知识点",
-              icon: "important",
+              icon: "star",
               collapsable: true,
               children: [
                 "mysql-index",
@@ -288,14 +258,19 @@ export const sidebarConfig = defineSidebarConfig({
           icon: "redis",
           collapsable: true,
           children: [
+            "cache-basics",
             "redis-questions-01",
+            "redis-questions-02",
             {
               text: "重要知识点",
-              icon: "important",
+              icon: "star",
               collapsable: true,
               children: [
                 "3-commonly-used-cache-read-and-write-strategies",
+                "redis-data-structures-01",
+                "redis-data-structures-02",
                 "redis-memory-fragmentation",
+                "redis-cluster",
               ],
             },
           ],
@@ -304,7 +279,7 @@ export const sidebarConfig = defineSidebarConfig({
     },
     {
       text: "开发工具",
-      icon: "Tools",
+      icon: "tool",
       prefix: "tools/",
       collapsable: true,
       children: [
@@ -330,6 +305,36 @@ export const sidebarConfig = defineSidebarConfig({
       ],
     },
     {
+      text: "常用框架",
+      prefix: "system-design/framework/",
+      icon: "framework",
+      collapsable: true,
+      children: [
+        {
+          text: "Spring&Spring Boot",
+          prefix: "spring/",
+          collapsable: true,
+          children: [
+            "spring-knowledge-and-questions-summary",
+            "springboot-knowledge-and-questions-summary",
+            "spring-common-annotations",
+            {
+              text: "重要知识点",
+              icon: "star",
+              collapsable: true,
+              children: [
+                "spring-transaction",
+                "spring-design-patterns-summary",
+                "spring-boot-auto-assembly-principles",
+              ],
+            },
+          ],
+        },
+        "mybatis/mybatis-interview",
+        "netty",
+      ],
+    },
+    {
       text: "系统设计",
       icon: "xitongsheji",
       prefix: "system-design/",
@@ -341,32 +346,13 @@ export const sidebarConfig = defineSidebarConfig({
           prefix: "basis/",
           icon: "basic",
           collapsable: true,
-          children: ["RESTfulAPI", "naming", "refactoring"],
-        },
-        {
-          text: "常用框架",
-          prefix: "framework/",
-          icon: "framework",
-          collapsable: true,
           children: [
+            "RESTfulAPI",
+            "naming",
+            "refactoring",
             {
-              text: "Spring",
-              prefix: "spring/",
-              collapsable: true,
-              children: [
-                "spring-knowledge-and-questions-summary",
-                "spring-common-annotations",
-                "spring-transaction",
-                "spring-design-patterns-summary",
-                "spring-boot-auto-assembly-principles",
-              ],
-            },
-            "mybatis/mybatis-interview",
-            "netty",
-            {
-              text: "SpringCloud",
-              prefix: "springcloud/",
-              children: ["springcloud-intro"],
+              text: "单元测试指南",
+              link: "unit-test",
             },
           ],
         },
@@ -377,6 +363,7 @@ export const sidebarConfig = defineSidebarConfig({
           collapsable: true,
           children: [
             "basis-of-authority-certification",
+            "jwt-intro",
             "advantages&disadvantages-of-jwt",
             "sso-intro",
             "sentive-words-filter",
@@ -404,7 +391,7 @@ export const sidebarConfig = defineSidebarConfig({
           text: "RPC",
           prefix: "rpc/",
           collapsable: true,
-          children: ["dubbo", "why-use-rpc"],
+          children: ["rpc-intro", "dubbo"],
         },
         "distributed-transaction",
         {
@@ -438,22 +425,22 @@ export const sidebarConfig = defineSidebarConfig({
             "rocketmq-intro",
             "rocketmq-questions",
             "rabbitmq-intro",
+            "rabbitmq-questions",
           ],
         },
       ],
     },
     {
       text: "高可用",
-      icon: "CalendarAvailability-1",
+      icon: "highavailable",
       prefix: "high-availability/",
       collapsable: true,
       children: [
         "high-availability-system-design",
+        "redundancy",
         "limit-request",
         "fallback&circuit-breaker",
         "timeout-and-retry",
-        "cluster",
-        "disaster-recovery&remote-live",
         "performance-test",
       ],
     },

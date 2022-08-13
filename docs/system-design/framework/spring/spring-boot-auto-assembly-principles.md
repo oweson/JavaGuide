@@ -1,14 +1,10 @@
 ---
-title:  Spring Boot 自动装配原理
+title:  SpringBoot 自动装配原理详解
 category: 框架
 tag:
   - SpringBoot
 ---
 
-# 
-
-> 本文已经收录进  Github 95k+ Star 的Java项目JavaGuide 。JavaGuide项目地址 : https://github.com/Snailclimb/JavaGuide 。
->
 > 作者：[Miki-byte-1024](https://github.com/Miki-byte-1024) & [Snailclimb](https://github.com/Snailclimb)
 
 每次问到 Spring Boot， 面试官非常喜欢问这个问题：“讲述一下 SpringBoot 自动装配原理？”。
@@ -142,7 +138,7 @@ public @interface SpringBootConfiguration {
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@AutoConfigurationPackage //作用：将main包下的所欲组件注册到容器中
+@AutoConfigurationPackage //作用：将main包下的所有组件注册到容器中
 @Import({AutoConfigurationImportSelector.class}) //加载自动装配类 xxxAutoconfiguration
 public @interface EnableAutoConfiguration {
     String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
